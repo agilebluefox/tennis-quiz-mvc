@@ -50,7 +50,7 @@ var data = [{
         mystery_img: 'images/mystery-djokovic.png',
         actual_img: 'images/djokovic.png',
         choices: ['Andre Agassi', 'Andy Roddick',
-            'Novak Djokovic', 'pete sampras'
+            'Novak Djokovic', 'Pete Sampras'
         ],
         answer: 2,
         feedback: 'Novak Djokovic is currently ranked number 1 in the world on the ATP Tour.'
@@ -89,7 +89,7 @@ var Question = function (name, text, mystery, actual, choices, answer,
  * @param  {array} data Array of questions as JSON objects.
  * @return {array} qList Array of question object instances.
  */
-function createQuestion (data) {
+function createQuestion(data) {
     var qList = [],
         count = 0;
     $.each(data, function (i, question) {
@@ -114,15 +114,16 @@ var Model = function (questions) {
     this.questions = questions;
     this.qIndex = 0;
     this.score = 0;
+    this.numberOfQuestions = questions.length;
 };
 
 // Method to increment the question number as the user progresses in the quiz.
-Model.prototype.increment = function() {
+Model.prototype.increment = function () {
     this.qIndex += 1;
 }
 
 // Method to retrieve a question from the data storage (array in this case).
-Model.prototype.getCurrentQuestion = function() {
+Model.prototype.getCurrentQuestion = function () {
     return this.questions[this.qIndex];
 }
 
@@ -132,9 +133,14 @@ Model.prototype.reset = function () {
     this.qIndex = 0;
 }
 
-Model.prototype.checkResponse = function(choice) {
+/**
+ * Method that compares the user's answer to the correct answer
+ * @param  {number} choice The index number of the answer selected
+ * @return {object}        The data to be displayed by the view.
+ */
+Model.prototype.checkResponse = function (choice) {
     console.log('I just got passed: ' + choice);
-    var correctAnswer = this.question.answer;
+    var correctAnswer = +this.question.answer;
     console.log('The correct answer is: ' + correctAnswer);
     var eval, score;
     if (choice == correctAnswer) {
@@ -150,14 +156,7 @@ Model.prototype.checkResponse = function(choice) {
         image: this.question.actualImg,
         score: score,
         qIndex: this.qIndex
-        }
-}
-
-Model.prototype.nextQuestion = function () {
-    console.log("Here's where I am");
-    this.increment;
-    this.updateQuestion();
-
+    }
 }
 
 /**
@@ -167,9 +166,6 @@ var View = function () {
     //declare the elements that need to be evaluated or manipulated.
     this.question = $('.question');
     this.button = $('.button input');
-    this.submit = $('input#submit-button');
-    this.next = $('input#next-button');
-    this.retake = $('input#retake-button');
     this.responseList = $('.response-list');
     this.answer = $('.answer');
     this.playerImage = $('.player img');
@@ -177,23 +173,29 @@ var View = function () {
 
     // Placeholders for the interface functions with the other components.
     this.onSubmit = null;
-    this.onRetake = null;
+    this.onNext = null;
 
-    // Event handler functions.
-    this.submit.on('click', this.getSelectedAnswer.bind(this));
-    // this.next.on('click', this.onNext.bind(this));
-    // this.retake.on('click', startQuiz);
+    // Event handler function.
+    // I had to include an intermediate function to evaluate the state of
+    // the radio buttons since the 'checked' attribute isn't present when
+    // the page loads. This means I couldn't add it to the list of elements
+    // in the view.
+    this.button.on('click', this.checkButtonValue.bind(this));
 }
 
 /**
- * Method that gets the choice selected by the user after the submit button is clicked.
+ * Method that checks the value of the button element and passes to the controller.
  * @return {[type]} [description]
  */
-View.prototype.getSelectedAnswer = function() {
-    var choice = $("input[type='radio'][name='selection']:checked").val();
-    console.log('The selected choice is ' + choice);
-    var feedback = this.onSubmit(choice);
-    this.renderAnswer(feedback);
+View.prototype.checkButtonValue = function () {
+    if (this.button.val() === 'Submit') {
+        var choice = $("input[type='radio'][name='selection']:checked").val();
+        var feedback = this.onSubmit(choice);
+        this.renderAnswer(feedback);
+    } else if (this.button.val() === 'Next') {
+        this.onNext();
+    } else if (this.button.val() === 'Retake')
+        startQuiz();
     return;
 }
 
@@ -201,13 +203,13 @@ View.prototype.getSelectedAnswer = function() {
  * Method to render page changes based on user's answer
  * @param  {object} element Updated info from the model
  */
-View.prototype.renderAnswer = function(element) {
+View.prototype.renderAnswer = function (element) {
     this.responseList.hide();
     this.answer.text(element.feedback).show();
-    this.playerImage.attr('src',element.image);
+    this.playerImage.attr('src', element.image);
     this.setButton('next-button', 'Next', 'next');
     var ball = "";
-    if(element.score) {
+    if (element.score) {
         ball = 'images/correct-answer-ball.png';
     } else {
         ball = 'images/wrong-answer-ball.png';
@@ -216,6 +218,15 @@ View.prototype.renderAnswer = function(element) {
     return;
 }
 
+/**
+ * Method to present a message to the user and offer to try again.
+ * @return {[type]} [description]
+ */
+View.prototype.wrapUp = function () {
+    this.setButton('retake-button', 'Retake', 'retake');
+    this.answer.text(
+        'You did great. Press the retake button to try again.');
+}
 
 /*
 TODO List
@@ -228,27 +239,33 @@ TODO List
 // DONE: The mystery image is replaced with the actual image.
 // DONE: The score ball is updated to the color based on whether or not the answer was correct.
 // DONE: The submit button is replaced by a next button.
-// When the next button is clicked, the next question, choices, and mystery image are presented.
-// The process continues until the results from the last question are rendered.
-// The retake button is presented.
-// If the retake button is clicked, the quiz is reset.
+// DONE: When the next button is clicked, the next question, choices, and mystery image are presented.
+// DONE: The process continues until the results from the last question are rendered.
+// DONE: The retake button is presented.
+// DONE: If the retake button is clicked, the quiz is reset.
 //
 // Considerations: The id, value and name attributes of the button (input) need
 // to change based on the state of the app.
 
-View.prototype.reset = function (numQuestions) {
+/**
+ * Method that setups the scoring based on the total number of questions
+ * @param  {number} numberOfQuestions The number of questions in the model
+ */
+View.prototype.reset = function (numberOfQuestions) {
     this.score.empty();
     var ball = 'images/no-answer-ball.png';
-    for (var i = 0; i < numQuestions; i++) {
+    for (var i = 0; i < numberOfQuestions; i++) {
         this.score.append(this.scoreBallTemplate(i, ball));
     }
     return;
 }
 
-View.prototype._next = function(){
-     // body...
-};
-
+/**
+ * Method to set the button attributes based on the state of the app.
+ * @param {string} id    The id attribute of the input
+ * @param {string} value The value attribute of the input
+ * @param {string} name  The name attribute of the input
+ */
 View.prototype.setButton = function (id, value, name) {
 
     this.button.attr('id', id);
@@ -257,30 +274,49 @@ View.prototype.setButton = function (id, value, name) {
     return;
 }
 
+/**
+ * Method that holds the html template to render the scoring balls.
+ * @param  {number} index The question number
+ * @param  {url} ball  The image src for the ball image
+ * @return {string}       The html code for the template
+ */
 View.prototype.scoreBallTemplate = function (index, ball) {
-    return  '<li class="score-ball ball-' + index +
-            '"><img src="' + ball + '" ' +
-            'height="57" width="57" alt="Score ball">' +
-            '</li>';
+    return '<li class="score-ball ball-' + index +
+        '"><img src="' + ball + '" ' +
+        'height="57" width="57" alt="Score ball">' +
+        '</li>';
 }
 
-View.prototype.listOptionTemplate = function(number, text) {
+/**
+ * Method to render each item in the list of choices.
+ * @param  {number} number The index of the choice in the question object
+ * @param  {string} text   The choice associated with the index number
+ * @return {string}        The html template code
+ */
+View.prototype.listOptionTemplate = function (number, text) {
     return '<li class="response">' +
-            '<input type="radio" name="selection" value="' +
-                number + '"><span>' + text + '</span></li>';
+        '<input type="radio" name="selection" value="' +
+        number + '"><span>' + text + '</span></li>';
 }
 
+/**
+ * Method to display a question and the associated elements to the page.
+ * @param  {object} question The question object
+ */
 View.prototype.displayQuestion = function (question) {
     // code to display a question
     this.question.text(question.text);
     // display the choices
     var choices = question.choices;
     // Make sure the list of options is empty before appending the new choices.
-    this.responseList.empty();
+    this.answer.empty().hide();
+    this.responseList.empty().show();
     // Iterate over the list and add the choice to the list
     for (var i = 0; i < choices.length; i++) {
         this.responseList.append(this.listOptionTemplate(i, choices[i]));
     }
+    // Display the submit button
+    this.setButton('submit-button', 'Submit', 'submit');
     // Display the mystery image
     this.playerImage.attr('src', question.mysteryImg);
     return;
@@ -294,10 +330,12 @@ View.prototype.displayQuestion = function (question) {
 var Controller = function (model, view) {
     this.model = model;
     this.view = view;
+    this.numberOfQuestions = '';
 
     // bindings
     view.onSubmit = model.checkResponse.bind(model);
-    view.onNext = model.nextQuestion.bind(model);
+    view.onNext = this.nextQuestion.bind(this);
+    // view.startOver = this.setupQuiz.bind(this);
 
 };
 
@@ -310,23 +348,45 @@ Controller.prototype.updateQuestion = function () {
     return;
 }
 
-Controller.prototype.setupQuiz = function () {
-    var numQuestions = this.model.questions.length;
+/**
+ * Reset the model and view properties necessary to start the quiz.
+ * @param  {number} numberOfQuestions The number of questions in the model.
+ */
+Controller.prototype.setupQuiz = function (numberOfQuestions) {
     this.model.reset();
-    this.view.reset(numQuestions);
+    this.view.reset(numberOfQuestions);
+    return;
+}
+
+/**
+ * Method to advance the quiz questions and notify the view when no more questions exist.
+ */
+Controller.prototype.nextQuestion = function () {
+    console.log("Here's where I am");
+    this.model.increment();
+    this.model.numberOfQuestions -= 1;
+    if (this.model.numberOfQuestions > 0) {
+        this.updateQuestion();
+    } else {
+        this.view.wrapUp();
+    }
     return;
 }
 
 $(document).ready(startQuiz);
 
-// Instantiate the MVC components.
-function startQuiz () {
+/**
+ * Function that instantiates the objects and starts the quiz.
+ */
+function startQuiz() {
     var model = new Model(questions);
     var view = new View();
     var controller = new Controller(model, view);
 
     // Get the quiz started.
-    controller.setupQuiz();
+    // controller.numberOfQuestions = model.questions.length;
+    // console.log(this.numberOfQuestions);
+    controller.setupQuiz(model.numberOfQuestions);
     controller.updateQuestion();
 }
 
