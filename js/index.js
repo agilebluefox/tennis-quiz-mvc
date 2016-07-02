@@ -112,24 +112,52 @@ var questions = createQuestion(data);
  */
 var Model = function (questions) {
     this.questions = questions;
-    this.currentQuestion = 0;
+    this.qIndex = 0;
     this.score = 0;
 };
 
 // Method to increment the question number as the user progresses in the quiz.
 Model.prototype.increment = function() {
-    this.currentQuestion += 1;
+    this.qIndex += 1;
 }
 
 // Method to retrieve a question from the data storage (array in this case).
 Model.prototype.getCurrentQuestion = function() {
-    return this.questions[this.currentQuestion];
+    return this.questions[this.qIndex];
 }
 
 // Reset some of the properties if the user wants to retake the quiz.
 Model.prototype.reset = function () {
     this.score = 0;
-    this.currentQuestion = 0;
+    this.qIndex = 0;
+}
+
+Model.prototype.checkResponse = function(choice) {
+    console.log('I just got passed: ' + choice);
+    var correctAnswer = this.question.answer;
+    console.log('The correct answer is: ' + correctAnswer);
+    var eval, score;
+    if (choice == correctAnswer) {
+        eval = "That's correct! ";
+        score = true;
+    } else {
+        eval = "Nice try! ";
+        score = false;
+    }
+
+    return {
+        feedback: eval + this.question.feedback,
+        image: this.question.actualImg,
+        score: score,
+        qIndex: this.qIndex
+        }
+}
+
+Model.prototype.nextQuestion = function () {
+    console.log("Here's where I am");
+    this.increment;
+    this.updateQuestion();
+
 }
 
 /**
@@ -139,15 +167,55 @@ var View = function () {
     //declare the elements that need to be evaluated or manipulated.
     this.question = $('.question');
     this.button = $('.button input');
+    this.submit = $('input#submit-button');
+    this.next = $('input#next-button');
+    this.retake = $('input#retake-button');
     this.responseList = $('.response-list');
+    this.answer = $('.answer');
     this.playerImage = $('.player img');
     this.score = $('ul.tennis-balls');
-    this.selectedAnswer = $("input[type='radio'][name='selection']:checked");
 
+    // Placeholders for the interface functions with the other components.
     this.onSubmit = null;
+    this.onRetake = null;
 
-    // this.button.on('click', this.onSubmit.bind(this));
+    // Event handler functions.
+    this.submit.on('click', this.getSelectedAnswer.bind(this));
+    // this.next.on('click', this.onNext.bind(this));
+    // this.retake.on('click', startQuiz);
 }
+
+/**
+ * Method that gets the choice selected by the user after the submit button is clicked.
+ * @return {[type]} [description]
+ */
+View.prototype.getSelectedAnswer = function() {
+    var choice = $("input[type='radio'][name='selection']:checked").val();
+    console.log('The selected choice is ' + choice);
+    var feedback = this.onSubmit(choice);
+    this.renderAnswer(feedback);
+    return;
+}
+
+/**
+ * Method to render page changes based on user's answer
+ * @param  {object} element Updated info from the model
+ */
+View.prototype.renderAnswer = function(element) {
+    this.responseList.hide();
+    this.answer.text(element.feedback).show();
+    this.playerImage.attr('src',element.image);
+    this.setButton('next-button', 'Next', 'next');
+    var ball = "";
+    if(element.score) {
+        ball = 'images/correct-answer-ball.png';
+    } else {
+        ball = 'images/wrong-answer-ball.png';
+    }
+    $('.ball-' + element.qIndex + ' img').attr('src', ball);
+    return;
+}
+
 
 /*
 TODO List
@@ -155,11 +223,11 @@ TODO List
 
 // DONE: The view has a list of radio inputs
 // DONE: The view has a submit button associated with the radio inputs
-// When the submit button is clicked, the user's selection is compared to the correct answer.
-// The choices are removed and the feedback is presented.
-// The mystery image is replaced with the actual image.
-// The score ball is updated to the color based on whether or not the answer was correct.
-// The submit button is replaced by a next button.
+// DONE: When the submit button is clicked, the user's selection is compared to the correct answer.
+// DONE: The choices are removed and the feedback is presented.
+// DONE: The mystery image is replaced with the actual image.
+// DONE: The score ball is updated to the color based on whether or not the answer was correct.
+// DONE: The submit button is replaced by a next button.
 // When the next button is clicked, the next question, choices, and mystery image are presented.
 // The process continues until the results from the last question are rendered.
 // The retake button is presented.
@@ -170,32 +238,28 @@ TODO List
 
 View.prototype.reset = function (numQuestions) {
     this.score.empty();
+    var ball = 'images/no-answer-ball.png';
     for (var i = 0; i < numQuestions; i++) {
-        this.score.append(this.scoreBallTemplate(i));
+        this.score.append(this.scoreBallTemplate(i, ball));
     }
-}
-
-View.prototype.setButton = function (type) {
-    var id, value, name;
-    if (type === 'submit') {
-        id = 'submit-button';
-        value = 'Submit';
-    } else if (type === 'next') {
-        id = 'next-button';
-        value = 'Next';
-    } else if (type === 'retake') {
-        id = 'retake-button';
-        value = 'Try Again';
-    }
-    this.button.attr('id', value);
-    this.button.attr('value', text);
-    this.button.attr('name', type);
     return;
 }
 
-View.prototype.scoreBallTemplate = function (index) {
+View.prototype._next = function(){
+     // body...
+};
+
+View.prototype.setButton = function (id, value, name) {
+
+    this.button.attr('id', id);
+    this.button.attr('value', value);
+    this.button.attr('name', name);
+    return;
+}
+
+View.prototype.scoreBallTemplate = function (index, ball) {
     return  '<li class="score-ball ball-' + index +
-            '"><img src="images/no-answer-ball.png" ' +
+            '"><img src="' + ball + '" ' +
             'height="57" width="57" alt="Score ball">' +
             '</li>';
 }
@@ -204,11 +268,6 @@ View.prototype.listOptionTemplate = function(number, text) {
     return '<li class="response">' +
             '<input type="radio" name="selection" value="' +
                 number + '"><span>' + text + '</span></li>';
-}
-
-View.prototype.onSubmit = function() {
-    var value = this.button.val();
-
 }
 
 View.prototype.displayQuestion = function (question) {
@@ -224,6 +283,7 @@ View.prototype.displayQuestion = function (question) {
     }
     // Display the mystery image
     this.playerImage.attr('src', question.mysteryImg);
+    return;
 }
 
 /**
@@ -236,18 +296,25 @@ var Controller = function (model, view) {
     this.view = view;
 
     // bindings
-    // view.onSubmit = model.gradeResponse.bind(model);
+    view.onSubmit = model.checkResponse.bind(model);
+    view.onNext = model.nextQuestion.bind(model);
+
 };
 
 // Take the data from the model and render it in the view.
 Controller.prototype.updateQuestion = function () {
-    this.view.displayQuestion(this.model.getCurrentQuestion());
+    // Store the current question object in the model to use later
+    // when checking the response and providing feedback.
+    this.model.question = this.model.getCurrentQuestion();
+    this.view.displayQuestion(this.model.question);
+    return;
 }
 
 Controller.prototype.setupQuiz = function () {
     var numQuestions = this.model.questions.length;
     this.model.reset();
     this.view.reset(numQuestions);
+    return;
 }
 
 $(document).ready(startQuiz);
