@@ -10,6 +10,26 @@ Some things to consider:
 7. The next question must be accessed and sent to the view upon which the entire process starts over again.
  */
 
+/*
+TODO List
+ */
+
+// DONE: The view has a list of radio inputs
+// DONE: The view has a submit button associated with the radio inputs
+// DONE: When the submit button is clicked, the user's selection is compared to the correct answer.
+// DONE: The choices are removed and the feedback is presented.
+// DONE: The mystery image is replaced with the actual image.
+// DONE: The score ball is updated to the color based on whether or not the answer was correct.
+// DONE: The submit button is replaced by a next button.
+// DONE: When the next button is clicked, the next question, choices, and mystery image are presented.
+// DONE: The process continues until the results from the last question are rendered.
+// DONE: The retake button is presented.
+// DONE: If the retake button is clicked, the quiz is reset.
+//
+// Considerations: The id, value and name attributes of the button (input) need
+// to change based on the state of the app.
+
+
 // Array of question objects. Once I get this working I'll import these
 // from a separate file.
 var data = [{
@@ -114,7 +134,7 @@ var Model = function (questions) {
     this.questions = questions;
     this.qIndex = 0;
     this.score = 0;
-    this.numberOfQuestions = questions.length;
+    this.totalQuestions = questions.length;
 };
 
 // Method to increment the question number as the user progresses in the quiz.
@@ -139,22 +159,21 @@ Model.prototype.reset = function () {
  * @return {object}        The data to be displayed by the view.
  */
 Model.prototype.checkResponse = function (choice) {
-    console.log('I just got passed: ' + choice);
     var correctAnswer = +this.question.answer;
-    console.log('The correct answer is: ' + correctAnswer);
-    var eval, score;
+    var eval, correct;
     if (choice == correctAnswer) {
         eval = "That's correct! ";
-        score = true;
+        this.score += 1;
+        correct = true;
     } else {
         eval = "Nice try! ";
-        score = false;
+        correct = false;
     }
 
     return {
         feedback: eval + this.question.feedback,
         image: this.question.actualImg,
-        score: score,
+        correct: correct,
         qIndex: this.qIndex
     }
 }
@@ -164,7 +183,8 @@ Model.prototype.checkResponse = function (choice) {
  */
 var View = function () {
     //declare the elements that need to be evaluated or manipulated.
-    this.question = $('.question');
+    this.question = $('.question-text');
+    this.questionNum = $('.question-number');
     this.button = $('.button input');
     this.responseList = $('.response-list');
     this.answer = $('.answer');
@@ -194,7 +214,8 @@ View.prototype.checkButtonValue = function () {
         this.renderAnswer(feedback);
     } else if (this.button.val() === 'Next') {
         this.onNext();
-    } else if (this.button.val() === 'Retake')
+
+    } else if (this.button.val() === 'Try Again')
         startQuiz();
     return;
 }
@@ -209,7 +230,7 @@ View.prototype.renderAnswer = function (element) {
     this.playerImage.attr('src', element.image);
     this.setButton('next-button', 'Next', 'next');
     var ball = "";
-    if (element.score) {
+    if (element.correct) {
         ball = 'images/correct-answer-ball.png';
     } else {
         ball = 'images/wrong-answer-ball.png';
@@ -222,39 +243,21 @@ View.prototype.renderAnswer = function (element) {
  * Method to present a message to the user and offer to try again.
  * @return {[type]} [description]
  */
-View.prototype.wrapUp = function () {
-    this.setButton('retake-button', 'Retake', 'retake');
+View.prototype.wrapUp = function (score) {
+    this.setButton('retake-button', 'Try Again', 'retake');
     this.answer.text(
-        'You did great. Press the retake button to try again.');
+        'You got ' + score +
+        ' correct answers. Press the button to try again.');
 }
-
-/*
-TODO List
- */
-
-// DONE: The view has a list of radio inputs
-// DONE: The view has a submit button associated with the radio inputs
-// DONE: When the submit button is clicked, the user's selection is compared to the correct answer.
-// DONE: The choices are removed and the feedback is presented.
-// DONE: The mystery image is replaced with the actual image.
-// DONE: The score ball is updated to the color based on whether or not the answer was correct.
-// DONE: The submit button is replaced by a next button.
-// DONE: When the next button is clicked, the next question, choices, and mystery image are presented.
-// DONE: The process continues until the results from the last question are rendered.
-// DONE: The retake button is presented.
-// DONE: If the retake button is clicked, the quiz is reset.
-//
-// Considerations: The id, value and name attributes of the button (input) need
-// to change based on the state of the app.
 
 /**
  * Method that setups the scoring based on the total number of questions
- * @param  {number} numberOfQuestions The number of questions in the model
+ * @param  {number} totalQuestions The number of questions in the model
  */
-View.prototype.reset = function (numberOfQuestions) {
+View.prototype.reset = function (totalQuestions) {
     this.score.empty();
     var ball = 'images/no-answer-ball.png';
-    for (var i = 0; i < numberOfQuestions; i++) {
+    for (var i = 0; i < totalQuestions; i++) {
         this.score.append(this.scoreBallTemplate(i, ball));
     }
     return;
@@ -300,10 +303,19 @@ View.prototype.listOptionTemplate = function (number, text) {
 }
 
 /**
+ * A helper method to make sure the page loads and the user is at hte top.
+ */
+View.prototype.scrollToTop = function () {
+    $(document).scrollTop(0);
+}
+
+/**
  * Method to display a question and the associated elements to the page.
  * @param  {object} question The question object
  */
-View.prototype.displayQuestion = function (question) {
+View.prototype.displayQuestion = function (question, number) {
+    qNumber = number + 1;
+    this.questionNum.text('Question ' + qNumber + ': ');
     // code to display a question
     this.question.text(question.text);
     // display the choices
@@ -330,12 +342,11 @@ View.prototype.displayQuestion = function (question) {
 var Controller = function (model, view) {
     this.model = model;
     this.view = view;
-    this.numberOfQuestions = '';
+    this.totalQuestions = '';
 
     // bindings
     view.onSubmit = model.checkResponse.bind(model);
     view.onNext = this.nextQuestion.bind(this);
-    // view.startOver = this.setupQuiz.bind(this);
 
 };
 
@@ -344,17 +355,18 @@ Controller.prototype.updateQuestion = function () {
     // Store the current question object in the model to use later
     // when checking the response and providing feedback.
     this.model.question = this.model.getCurrentQuestion();
-    this.view.displayQuestion(this.model.question);
+    this.view.scrollToTop();
+    this.view.displayQuestion(this.model.question, this.model.qIndex);
     return;
 }
 
 /**
  * Reset the model and view properties necessary to start the quiz.
- * @param  {number} numberOfQuestions The number of questions in the model.
+ * @param  {number} totalQuestions The number of questions in the model.
  */
-Controller.prototype.setupQuiz = function (numberOfQuestions) {
+Controller.prototype.setupQuiz = function (totalQuestions) {
     this.model.reset();
-    this.view.reset(numberOfQuestions);
+    this.view.reset(totalQuestions);
     return;
 }
 
@@ -362,13 +374,12 @@ Controller.prototype.setupQuiz = function (numberOfQuestions) {
  * Method to advance the quiz questions and notify the view when no more questions exist.
  */
 Controller.prototype.nextQuestion = function () {
-    console.log("Here's where I am");
     this.model.increment();
-    this.model.numberOfQuestions -= 1;
-    if (this.model.numberOfQuestions > 0) {
+    this.model.totalQuestions -= 1;
+    if (this.model.totalQuestions > 0) {
         this.updateQuestion();
     } else {
-        this.view.wrapUp();
+        this.view.wrapUp(this.model.score);
     }
     return;
 }
@@ -384,165 +395,8 @@ function startQuiz() {
     var controller = new Controller(model, view);
 
     // Get the quiz started.
-    // controller.numberOfQuestions = model.questions.length;
-    // console.log(this.numberOfQuestions);
-    controller.setupQuiz(model.numberOfQuestions);
+    // controller.totalQuestions = model.questions.length;
+    // console.log(this.totalQuestions);
+    controller.setupQuiz(model.totalQuestions);
     controller.updateQuestion();
 }
-
-
-//     // initialize variables and start the quiz.
-//     var currentQuestion;
-//     startQuiz();
-
-//     function startQuiz() {
-//         questionNumber = 0;
-//         // Go to the top of the page.
-//         scrollToTop();
-//         resetScore();
-//         setImage('mystery');
-//         setButton('submit');
-//         updateQuestion();
-//     }
-
-
-//     $('.button').on('click', '#submit-button', function (e) {
-//         // Prevent the page from reloading.
-//         e.preventDefault();
-//         // Check the response and update the score.
-//         var judgement;
-//         var response = checkResponse();
-//         if (response) {
-//             judgement = "Well done!";
-//         } else {
-//             judgement = "Nice try!";
-//         }
-//         // Set the feedback to present to the user.
-//         var feedback = questions[questionNumber].feedback;
-//         feedback = judgement + " " + feedback;
-//         // Hide the list of choices and display the feedback.
-//         $('ul.response-list').hide();
-//         $('div.answer').html(
-//             '<span>Answer: </span><p class="answer-text">' +
-//             feedback + '</p>');
-//         $('div.answer').show();
-//         // Set the current image to the actual image.
-//         setImage('actual');
-//         // Change the button depending on where the user is in the quiz.
-//         if (questionNumber < 4) {
-//             setButton('next');
-//         } else {
-//             setButton('retake');
-//         }
-//         // Go to the top of the page - for smaller displays.
-//         scrollToTop();
-
-//     });
-
-//     $('.button').on('click', '#next-button', function (e) {
-//         // Prevent the button event from reloading the page.
-//         e.preventDefault();
-//         // Get the new question and answer choices.
-//         // Increment the question number.
-//         questionNumber += 1;
-//         updateQuestion();
-//         // Update the image.
-//         setImage('mystery');
-//         // Show the submit button.
-//         setButton('submit');
-//         // Go to the top of the page - for smaller displays.
-//         scrollToTop();
-
-//     });
-
-//     $('.button').on('click', '#retake-button', function (e) {
-//         // Prevent the page reload.
-//         e.preventDefault();
-//         startQuiz();
-//     });
-
-//     function setImage(type) {
-//         var image;
-//         if (type === 'actual') {
-//             // Set the current image to the actual image.
-//             image = questions[questionNumber].actualImg;
-//         } else if (type === 'mystery') {
-//             // Set the image to the mystery image.
-//             image = questions[questionNumber].mysteryImg;
-//         }
-//         $('.player img').attr('src', image);
-//         return;
-//     }
-
-//     function setButton(value) {
-//         var submitHTML =
-//             '<input type="submit" id="submit-button" value="Submit" name="submit" />';
-//         var nextHTML =
-//             '<input type="submit" id="next-button" value="Next" name="next" />';
-//         var retakeHTML =
-//             '<input type="submit" id="retake-button" value="Try Again" name="retake" />';
-//         if (value === 'submit') {
-//             $('.button').html(submitHTML);
-//         } else if (value === 'next') {
-//             $('.button').html(nextHTML);
-//         } else if (value === 'retake') {
-//             $('.button').html(retakeHTML);
-//         }
-//         return;
-//     }
-
-//     function updateQuestion() {
-//         var questionText = questions[questionNumber].text;
-//         var choices = questions[questionNumber].choices;
-//         var number = questionNumber + 1;
-
-//         // Insert the new question text and the list of choices into the page.
-//         $('.question').html(
-//             '<span>Question </span><span class="count">' + number +
-//             '</span>: <p class="answer-text">' + questionText +
-//             '</p>');
-//         $('ul.response-list').empty();
-//         $('div.answer').hide();
-//         $('ul.response-list').show();
-//         for (var i = 0; i < choices.length; i++) {
-//             $('ul.response-list').append(
-//                 '<li class="response"><input type="radio" name="selection" value="' +
-//                 i + '"><span>' + choices[i] + '</span></li>');
-//         }
-//         return;
-//     }
-
-//     function checkResponse() {
-//         // Add a few variables that will be used to render the correct
-//         // score ball depending on the user's response to the question.
-//         var choice = $("input[type='radio'][name='selection']:checked")
-//             .val();
-//         var correctAnswer = questions[questionNumber].answer;
-//         var answer;
-//         var ball;
-//         // Check the response to see if it's right or wrong.
-//         if (choice == correctAnswer) {
-//             ball = 'images/correct-answer-ball.png';
-//             answer = true;
-//         } else {
-//             ball = 'images/wrong-answer-ball.png';
-//             answer = false;
-//         }
-//         $('li.ball-' + questionNumber + ' img').attr('src', ball);
-//         return answer;
-//     }
-
-//     function resetScore() {
-//         $('ul.tennis-balls').empty();
-//         for (var i = 0; i < questions.length; i++) {
-//             $('ul.tennis-balls').append('<li class="score-ball ball-' +
-//                 i +
-//                 '"><img src="images/no-answer-ball.png" height="57" width="57" alt="Score ball"></li>'
-//             );
-//         }
-//     }
-
-//     function scrollToTop() {
-//         $(document).scrollTop(0);
-//     }
-// });
