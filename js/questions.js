@@ -52,7 +52,7 @@ var data = [{
             'Pete Sampras', 'John Isner'
         ],
         answer: 3,
-        feedback: 'John Isner defeated Nicolaus Mahut in 11 hours and 5 minutes. the match was played over a three day period since there are no court lights at Wimbledon.'
+        feedback: 'John Isner defeated Nicolaus Mahut in 11 hours and 5 minutes. The match was played over a three day period since there are no court lights at Wimbledon.'
     }
 
 ];
