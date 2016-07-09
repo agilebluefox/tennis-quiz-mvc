@@ -1,0 +1,197 @@
+/**
+ * Setup color variables
+ */
+/**
+ * Font variables
+ */
+/**
+ * Mixins
+ */
+.center {
+  margin-left: auto;
+  margin-right: auto;
+}
+/**
+ * Page styles
+ */
+body {
+  background-image: url(../images/tenniscourt.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  color: white;
+}
+/**
+ * Header styles
+ */
+h1.title {
+  font-family: 'Freckle Face', cursive;
+  font-size: 4rem;
+  text-align: center;
+  color: yellow;
+  text-shadow: 3px 6px 12px #323232;
+  border-top: 10px solid white;
+  border-bottom: 10px solid white;
+  padding: 1rem 0;
+  background-color: darkred;
+  margin-top: 0;
+}
+/**
+ * Quiz section styles
+ */
+.question {
+  color: yellow;
+  font-size: 2.5rem;
+  font-weight: 800;
+  font-family: 'Caveat', cursive;
+  position: relative;
+  clear: both;
+  text-shadow: 3px 6px 12px #323232;
+  padding: 1rem;
+  line-height: 4rem;
+}
+.question-number {
+  color: yellow;
+  font-size: 2.5rem;
+  font-weight: 800;
+  font-family: Helvetica, sans-serif;
+}
+.question-text {
+  color: white;
+  font-style: italic;
+  font-size: 3rem;
+  display: inline;
+  font-family: 'Caveat', cursive;
+  font-weight: 800;
+}
+.answer {
+  color: yellow;
+  font-size: 2.5rem;
+  font-weight: 800;
+  font-family: Helvetica, sans-serif;
+  position: relative;
+  clear: both;
+  text-shadow: 3px 6px 12px #323232;
+  padding: 1rem;
+  line-height: 4rem;
+}
+.answer-text {
+  color: white;
+  font-size: 3rem;
+  font-style: italic;
+  display: inline;
+  font-family: 'Caveat', cursive;
+  font-weight: 800;
+}
+.quiz {
+  width: 80%;
+  min-width: 382px;
+  margin: 2rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+.container {
+  overflow: hidden;
+  text-align: center;
+  margin-top: 2.5rem;
+}
+.player {
+  height: 605px;
+  width: 379px;
+  background-color: rgba(20, 20, 20, 0.3);
+  border: 1px solid #3f3f3f;
+  border-radius: 10px;
+  margin: 0;
+  margin-left: auto;
+  margin-right: auto;
+}
+.responses {
+  min-width: 379px;
+  text-align: center;
+}
+ul.response-list {
+  display: inline-block;
+  padding: 2rem;
+  min-width: 379px;
+  margin: 0;
+  margin-left: auto;
+  margin-right: auto;
+  font-size: 2rem;
+  text-align: left;
+}
+li.response {
+  list-style: none;
+  margin-top: 1rem;
+  padding: 0.5rem;
+}
+.response span {
+  margin-left: 0.5rem;
+  text-shadow: 3px 6px 12px #323232;
+}
+input[type="radio"] {
+  vertical-align: middle;
+}
+#submit-button,
+#next-button,
+#retake-button {
+  width: 150px;
+  padding: 1rem;
+  background-color: yellow;
+  color: black;
+  border: 1px solid #5a5a5a;
+  display: block;
+  margin: 1rem;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 10px;
+  box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
+  font-size: 1.5rem;
+}
+#submit-button:hover,
+#next-button:hover,
+#retake-button:hover {
+  background-color: white;
+}
+.score {
+  padding: 2rem 0;
+  margin-top: 2rem;
+}
+ul.tennis-balls {
+  /* min-width: 379px; */
+  margin: 0;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0;
+  text-align: center;
+}
+li.score-ball {
+  list-style: none;
+  margin: 1rem 0.4rem;
+  padding: 0;
+  width: 57px;
+  height: 57px;
+  display: inline-block;
+}
+@media screen and (min-width: 1200px) {
+  .player {
+    display: inline-block;
+    width: 40%;
+  }
+  .responses {
+    display: inline-block;
+    width: 40%;
+    vertical-align: top;
+  }
+  .score {
+    width: 10%;
+    display: inline-block;
+    margin-top: 0;
+    vertical-align: top;
+  }
+  li.score-ball {
+    display: block;
+    margin: 1rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+/*# sourceMappingURL=tennis-quiz-mvc.1.0.0.css.map */

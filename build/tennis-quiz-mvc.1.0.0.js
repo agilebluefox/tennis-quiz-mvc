@@ -44,6 +44,8 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+	
 	/*
 	Start by designing the model. The data is static and stored in an array of objects (hash).
 	Some things to consider:
@@ -77,12 +79,10 @@
 	
 	var $ = __webpack_require__(1);
 	var data = __webpack_require__(2);
-	var app = __webpack_require__(3);
-	var model = __webpack_require__(4);
-	var view = __webpack_require__(5);
-	var controller = __webpack_require__(6);
-	
-
+	var model = __webpack_require__(3);
+	var view = __webpack_require__(4);
+	var controller = __webpack_require__(5);
+	var app = __webpack_require__(6);
 
 /***/ },
 /* 1 */
@@ -10131,64 +10131,46 @@
 /* 2 */
 /***/ function(module, exports) {
 
+	'use strict';
+	
 	// Array of question objects. Once I get this working I'll import these
 	// from a separate file.
 	var data = [{
-	        text: 'Which player on the ATP Tour has won the most Grand Slam titles?',
-	        mystery_img: 'images/mystery-federer.png',
-	        actual_img: 'images/federer.png',
-	        choices: ['Pete Sampras', 'Rafael Nadal',
-	            'Roger Federer', 'John McEnroe'
-	        ],
-	        answer: 2,
-	        feedback: 'Roger Federer has won 17 grand slam titles including 7 Wimbledon, 5 US Open, 1 French Open, and 4 Australian Open titles.'
-	    },
-	
-	    {
-	        text: 'This player has won the French Open a whopping nine times over a ten year period!',
-	        mystery_img: 'images/mystery-nadal.png',
-	        actual_img: 'images/nadal.png',
-	        choices: ['Roger Federer', 'Rafael Nadal',
-	            'Novak Djokovic', 'John Isner'
-	        ],
-	        answer: 1,
-	        feedback: 'Rafael Nadal is considered to be "the King of Clay" and one of the greatest players ever.'
-	    },
-	
-	    {
-	        text: 'Which of these players won the men\'s singles championship at the 2012 Olympic Games?',
-	        mystery_img: 'images/mystery-murray.png',
-	        actual_img: 'images/murray.png',
-	        choices: ['Andy Murray', 'Novak Djokovic',
-	            'Pete Sampras', 'Andy Roddick'
-	        ],
-	        answer: 0,
-	        feedback: 'Andy Murray is the first British singles champion in over 100 years.'
-	    },
-	
-	    {
-	        text: 'Who is the only player to have beaten both Roger Federer and Rafael Nadal in all four Grand Slam events?',
-	        mystery_img: 'images/mystery-djokovic.png',
-	        actual_img: 'images/djokovic.png',
-	        choices: ['Andre Agassi', 'Andy Roddick',
-	            'Novak Djokovic', 'Pete Sampras'
-	        ],
-	        answer: 2,
-	        feedback: 'Novak Djokovic is currently ranked number 1 in the world on the ATP Tour.'
-	    },
-	
-	    {
-	        text: 'This player won the longest men\'s singles match ever to be played at Wimbledon.',
-	        mystery_img: 'images/mystery-isner.png',
-	        actual_img: 'images/isner.png',
-	        choices: ['Rafael Nadal', 'John McEnroe',
-	            'Pete Sampras', 'John Isner'
-	        ],
-	        answer: 3,
-	        feedback: 'John Isner defeated Nicolaus Mahut in 11 hours and 5 minutes. the match was played over a three day period since there are no court lights at Wimbledon.'
-	    }
-	
-	];
+	    text: 'Which player on the ATP Tour has won the most Grand Slam titles?',
+	    mystery_img: 'images/mystery-federer.png',
+	    actual_img: 'images/federer.png',
+	    choices: ['Pete Sampras', 'Rafael Nadal', 'Roger Federer', 'John McEnroe'],
+	    answer: 2,
+	    feedback: 'Roger Federer has won 17 grand slam titles including 7 Wimbledon, 5 US Open, 1 French Open, and 4 Australian Open titles.'
+	}, {
+	    text: 'This player has won the French Open a whopping nine times over a ten year period!',
+	    mystery_img: 'images/mystery-nadal.png',
+	    actual_img: 'images/nadal.png',
+	    choices: ['Roger Federer', 'Rafael Nadal', 'Novak Djokovic', 'John Isner'],
+	    answer: 1,
+	    feedback: 'Rafael Nadal is considered to be "the King of Clay" and one of the greatest players ever.'
+	}, {
+	    text: 'Which of these players won the men\'s singles championship at the 2012 Olympic Games?',
+	    mystery_img: 'images/mystery-murray.png',
+	    actual_img: 'images/murray.png',
+	    choices: ['Andy Murray', 'Novak Djokovic', 'Pete Sampras', 'Andy Roddick'],
+	    answer: 0,
+	    feedback: 'Andy Murray is the first British singles champion in over 100 years.'
+	}, {
+	    text: 'Who is the only player to have beaten both Roger Federer and Rafael Nadal in all four Grand Slam events?',
+	    mystery_img: 'images/mystery-djokovic.png',
+	    actual_img: 'images/djokovic.png',
+	    choices: ['Andre Agassi', 'Andy Roddick', 'Novak Djokovic', 'Pete Sampras'],
+	    answer: 2,
+	    feedback: 'Novak Djokovic is currently ranked number 1 in the world on the ATP Tour.'
+	}, {
+	    text: 'This player won the longest men\'s singles match ever to be played at Wimbledon.',
+	    mystery_img: 'images/mystery-isner.png',
+	    actual_img: 'images/isner.png',
+	    choices: ['Rafael Nadal', 'John McEnroe', 'Pete Sampras', 'John Isner'],
+	    answer: 3,
+	    feedback: 'John Isner defeated Nicolaus Mahut in 11 hours and 5 minutes. The match was played over a three day period since there are no court lights at Wimbledon.'
+	}];
 	
 	module.exports = data;
 
@@ -10196,41 +10178,15 @@
 /* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var $ = __webpack_require__(1);
-	var Model = __webpack_require__(4);
-	var View = __webpack_require__(5);
-	var Controller = __webpack_require__(6);
+	'use strict';
 	
-	$(document).ready(startQuiz);
-	
-	/**
-	 * Function that instantiates the objects and starts the quiz.
-	 */
-	function startQuiz() {
-	    var model = new Model();
-	    var view = new View();
-	    var controller = new Controller(model, view);
-	
-	    // Get the quiz started.
-	    // controller.totalQuestions = model.questions.length;
-	    // console.log(this.totalQuestions);
-	    controller.setupQuiz(model.totalQuestions);
-	    controller.updateQuestion();
-	}
-
-
-/***/ },
-/* 4 */
-/***/ function(module, exports, __webpack_require__) {
-
 	var $ = __webpack_require__(1);
 	var data = __webpack_require__(2);
 	/**
 	 * Represents a question object.
 	 * @constructor
 	 */
-	var Question = function (name, text, mystery, actual, choices, answer,
-	    feedback) {
+	var Question = function Question(name, text, mystery, actual, choices, answer, feedback) {
 	    this.name = name || "";
 	    this.text = text || "";
 	    this.mysteryImg = mystery || "";
@@ -10251,9 +10207,7 @@
 	    $.each(data, function (i, question) {
 	        count += 1;
 	        var name = "question" + count;
-	        var q = new Question(name, question.text, question.mystery_img,
-	            question.actual_img, question.choices, question.answer,
-	            question.feedback);
+	        var q = new Question(name, question.text, question.mystery_img, question.actual_img, question.choices, question.answer, question.feedback);
 	        qList.push(q);
 	    });
 	    return qList;
@@ -10266,7 +10220,7 @@
 	 * Represents the data.
 	 * @param {Array} questions Array of question instances.
 	 */
-	var Model = function () {
+	var Model = function Model() {
 	    this.questions = createQuestion(data);
 	    this.qIndex = 0;
 	    this.score = 0;
@@ -10276,18 +10230,18 @@
 	// Method to increment the question number as the user progresses in the quiz.
 	Model.prototype.increment = function () {
 	    this.qIndex += 1;
-	}
+	};
 	
 	// Method to retrieve a question from the data storage (array in this case).
 	Model.prototype.getCurrentQuestion = function () {
 	    return this.questions[this.qIndex];
-	}
+	};
 	
 	// Reset some of the properties if the user wants to retake the quiz.
 	Model.prototype.reset = function () {
 	    this.score = 0;
 	    this.qIndex = 0;
-	}
+	};
 	
 	/**
 	 * Method that compares the user's answer to the correct answer
@@ -10296,34 +10250,36 @@
 	 */
 	Model.prototype.checkResponse = function (choice) {
 	    var correctAnswer = +this.question.answer;
-	    var eval, correct;
+	    var e, correct;
 	    if (choice == correctAnswer) {
-	        eval = "That's correct! ";
+	        e = "That's correct! ";
 	        this.score += 1;
 	        correct = true;
 	    } else {
-	        eval = "Nice try! ";
+	        e = "Nice try! ";
 	        correct = false;
 	    }
 	
 	    return {
-	        feedback: eval + this.question.feedback,
+	        feedback: e + this.question.feedback,
 	        image: this.question.actualImg,
 	        correct: correct,
 	        qIndex: this.qIndex
-	    }
-	}
+	    };
+	};
 	module.exports = Model;
 
 /***/ },
-/* 5 */
+/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+	
 	var $ = __webpack_require__(1);
 	/**
 	 * Represents the view.
 	 */
-	var View = function () {
+	var View = function View() {
 	    //declare the elements that need to be evaluated or manipulated.
 	    this.question = $('.question-text');
 	    this.questionNum = $('.question-number');
@@ -10343,7 +10299,7 @@
 	    // the page loads. This means I couldn't add it to the list of elements
 	    // in the view.
 	    this.button.on('click', this.checkButtonValue.bind(this));
-	}
+	};
 	
 	/**
 	 * Method that checks the value of the button element and passes to the controller.
@@ -10356,11 +10312,9 @@
 	        this.renderAnswer(feedback);
 	    } else if (this.button.val() === 'Next') {
 	        this.onNext();
-	
-	    } else if (this.button.val() === 'Try Again')
-	        startQuiz();
+	    } else if (this.button.val() === 'Try Again') location.reload();
 	    return;
-	}
+	};
 	
 	/**
 	 * Method to render page changes based on user's answer
@@ -10379,7 +10333,7 @@
 	    }
 	    $('.ball-' + element.qIndex + ' img').attr('src', ball);
 	    return;
-	}
+	};
 	
 	/**
 	 * Method to present a message to the user and offer to try again.
@@ -10387,10 +10341,8 @@
 	 */
 	View.prototype.wrapUp = function (score) {
 	    this.setButton('retake-button', 'Try Again', 'retake');
-	    this.answer.text(
-	        'You got ' + score +
-	        ' correct answers. Press the button to try again.');
-	}
+	    this.answer.text('You got ' + score + ' correct answers. Press the button to try again.');
+	};
 	
 	/**
 	 * Method that setups the scoring based on the total number of questions
@@ -10403,7 +10355,7 @@
 	        this.score.append(this.scoreBallTemplate(i, ball));
 	    }
 	    return;
-	}
+	};
 	
 	/**
 	 * Method to set the button attributes based on the state of the app.
@@ -10417,7 +10369,7 @@
 	    this.button.attr('value', value);
 	    this.button.attr('name', name);
 	    return;
-	}
+	};
 	
 	/**
 	 * Method that holds the html template to render the scoring balls.
@@ -10426,11 +10378,8 @@
 	 * @return {string}       The html code for the template
 	 */
 	View.prototype.scoreBallTemplate = function (index, ball) {
-	    return '<li class="score-ball ball-' + index +
-	        '"><img src="' + ball + '" ' +
-	        'height="57" width="57" alt="Score ball">' +
-	        '</li>';
-	}
+	    return '<li class="score-ball ball-' + index + '"><img src="' + ball + '" ' + 'height="57" width="57" alt="Score ball">' + '</li>';
+	};
 	
 	var $ = __webpack_require__(1);
 	
@@ -10441,17 +10390,15 @@
 	 * @return {string}        The html template code
 	 */
 	View.prototype.listOptionTemplate = function (number, text) {
-	    return '<li class="response">' +
-	        '<input type="radio" name="selection" value="' +
-	        number + '"><span>' + text + '</span></li>';
-	}
+	    return '<li class="response">' + '<input type="radio" name="selection" value="' + number + '"><span>' + text + '</span></li>';
+	};
 	
 	/**
 	 * A helper method to make sure the page loads and the user is at hte top.
 	 */
 	View.prototype.scrollToTop = function () {
 	    $(document).scrollTop(0);
-	}
+	};
 	
 	/**
 	 * Method to display a question and the associated elements to the page.
@@ -10459,7 +10406,7 @@
 	 */
 	View.prototype.displayQuestion = function (question, number) {
 	    console.log(question);
-	    qNumber = number + 1;
+	    var qNumber = number + 1;
 	    this.questionNum.text('Question ' + qNumber + ': ');
 	    // code to display a question
 	    this.question.text(question.text);
@@ -10478,23 +10425,25 @@
 	    // Display the mystery image
 	    this.playerImage.attr('src', question.mysteryImg);
 	    return;
-	}
+	};
 	module.exports = View;
 
 /***/ },
-/* 6 */
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+	
 	var $ = __webpack_require__(1);
-	var model = __webpack_require__(4);
-	var view = __webpack_require__(5);
+	var model = __webpack_require__(3);
+	var view = __webpack_require__(4);
 	
 	/**
 	 * Handles the connection between the view and the model.
 	 * @param {Object} model Stores and manipulates the data.
 	 * @param {Object} view  Presents the data and listens for events.
 	 */
-	var Controller = function (model, view) {
+	var Controller = function Controller(model, view) {
 	    this.model = model;
 	    this.view = view;
 	    this.totalQuestions = '';
@@ -10502,7 +10451,6 @@
 	    // bindings
 	    view.onSubmit = model.checkResponse.bind(model);
 	    view.onNext = this.nextQuestion.bind(this);
-	
 	};
 	
 	// Take the data from the model and render it in the view.
@@ -10513,7 +10461,7 @@
 	    this.view.scrollToTop();
 	    this.view.displayQuestion(this.model.question, this.model.qIndex);
 	    return;
-	}
+	};
 	
 	/**
 	 * Reset the model and view properties necessary to start the quiz.
@@ -10523,7 +10471,7 @@
 	    this.model.reset();
 	    this.view.reset(totalQuestions);
 	    return;
-	}
+	};
 	
 	/**
 	 * Method to advance the quiz questions and notify the view when no more questions exist.
@@ -10537,8 +10485,36 @@
 	        this.view.wrapUp(this.model.score);
 	    }
 	    return;
-	}
+	};
 	module.exports = Controller;
+
+/***/ },
+/* 6 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var $ = __webpack_require__(1);
+	var Model = __webpack_require__(3);
+	var View = __webpack_require__(4);
+	var Controller = __webpack_require__(5);
+	
+	$(document).ready(startQuiz);
+	
+	/**
+	 * Function that instantiates the objects and starts the quiz.
+	 */
+	function startQuiz() {
+	    var model = new Model();
+	    var view = new View();
+	    var controller = new Controller(model, view);
+	
+	    // Get the quiz started.
+	    // controller.totalQuestions = model.questions.length;
+	    // console.log(this.totalQuestions);
+	    controller.setupQuiz(model.totalQuestions);
+	    controller.updateQuestion();
+	}
 
 /***/ }
 /******/ ]);

@@ -71,18 +71,18 @@ Model.prototype.reset = function () {
  */
 Model.prototype.checkResponse = function (choice) {
     var correctAnswer = +this.question.answer;
-    var eval, correct;
+    var e, correct;
     if (choice == correctAnswer) {
-        eval = "That's correct! ";
+        e = "That's correct! ";
         this.score += 1;
         correct = true;
     } else {
-        eval = "Nice try! ";
+        e = "Nice try! ";
         correct = false;
     }
 
     return {
-        feedback: eval + this.question.feedback,
+        feedback: e + this.question.feedback,
         image: this.question.actualImg,
         correct: correct,
         qIndex: this.qIndex

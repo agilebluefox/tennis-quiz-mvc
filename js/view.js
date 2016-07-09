@@ -37,7 +37,7 @@ View.prototype.checkButtonValue = function () {
         this.onNext();
 
     } else if (this.button.val() === 'Try Again')
-        startQuiz();
+        location.reload();
     return;
 }
 
@@ -138,7 +138,7 @@ View.prototype.scrollToTop = function () {
  */
 View.prototype.displayQuestion = function (question, number) {
     console.log(question);
-    qNumber = number + 1;
+    var qNumber = number + 1;
     this.questionNum.text('Question ' + qNumber + ': ');
     // code to display a question
     this.question.text(question.text);

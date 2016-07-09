@@ -31,8 +31,7 @@ TODO List
 
 var $ = require('jquery');
 var data = require('./questions');
-var app = require('./app');
 var model = require('./model');
 var view = require('./view');
 var controller = require('./controller');
-
+var app = require('./app');
