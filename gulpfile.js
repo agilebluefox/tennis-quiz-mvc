@@ -71,6 +71,7 @@ gulp.task('minify-js', ['add-jquery'], function () {
         'view.js',
         'controller.js',
         'app.js']))
+    .pipe(uglify())
     .pipe(concat('bundle.js'))
     .pipe(gulp.dest('./js'));
 });
