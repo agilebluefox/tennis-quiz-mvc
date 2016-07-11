@@ -7,7 +7,7 @@
 @shadow-color: rgba(50,50,50,1);
 @bkgrd-trans: rgba(20,20,20,0.3);
 @text-color: yellow;
-@base-color: white;
+@body-color: white;
 
 /**
  * Font variables
@@ -40,7 +40,7 @@ body {
     background-image: url(../images/tenniscourt.jpg);
     background-repeat: no-repeat;
     background-size: cover;
-    color: @base-color;
+    color: @body-color;
 }
 
 /**
@@ -84,7 +84,7 @@ h1.title {
 }
 
 .question-text {
-    color: @base-color;
+    color: @body-color;
     font-style: italic;
     font-size: @fs * 3;
     display: inline;
@@ -105,7 +105,7 @@ h1.title {
 }
 
 .answer-text {
-    color: @base-color;
+    color: @body-color;
     font-size: @fs * 3;
     font-style: italic;
     display: inline;
@@ -182,7 +182,6 @@ input[type="radio"] {
 
 #submit-button:hover, #next-button:hover, #retake-button:hover {
     background-color: @base-color;
-
 }
 
 .score {

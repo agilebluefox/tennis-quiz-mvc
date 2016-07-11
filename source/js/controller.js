@@ -1,22 +1,31 @@
-var $ = require('jquery');
-var model = require('./model');
-var view = require('./view');
+// var $ = require('jquery');
+// var model = require('./model');
+// var view = require('./view');
 
 /**
  * Handles the connection between the view and the model.
  * @param {Object} model Stores and manipulates the data.
  * @param {Object} view  Presents the data and listens for events.
  */
-var Controller = function (model, view) {
-    this.model = model;
-    this.view = view;
+var Controller = function () {
     this.totalQuestions = '';
+};
+
+Controller.prototype.startQuiz = function () {
+    this.model = new Model();
+    this.view = new View();
 
     // bindings
-    view.onSubmit = model.checkResponse.bind(model);
-    view.onNext = this.nextQuestion.bind(this);
+    this.view.onSubmit = this.model.checkResponse.bind(this.model);
+    this.view.onNext = this.nextQuestion.bind(this);
+    this.view.onRetake = this.setupQuiz.bind(this);
 
-};
+    // Get the quiz started.
+    // controller.totalQuestions = model.questions.length;
+    // console.log(this.totalQuestions);
+    this.setupQuiz();
+
+}
 
 // Take the data from the model and render it in the view.
 Controller.prototype.updateQuestion = function () {
@@ -32,9 +41,11 @@ Controller.prototype.updateQuestion = function () {
  * Reset the model and view properties necessary to start the quiz.
  * @param  {number} totalQuestions The number of questions in the model.
  */
-Controller.prototype.setupQuiz = function (totalQuestions) {
+Controller.prototype.setupQuiz = function () {
     this.model.reset();
+    var totalQuestions = this.model.totalQuestions;
     this.view.reset(totalQuestions);
+    this.updateQuestion();
     return;
 }
 
@@ -44,6 +55,7 @@ Controller.prototype.setupQuiz = function (totalQuestions) {
 Controller.prototype.nextQuestion = function () {
     this.model.increment();
     this.model.totalQuestions -= 1;
+    console.log('The number of questions is: ' + this.model.totalQuestions);
     if (this.model.totalQuestions > 0) {
         this.updateQuestion();
     } else {
@@ -51,4 +63,4 @@ Controller.prototype.nextQuestion = function () {
     }
     return;
 }
-module.exports = Controller;
+// module.exports = Controller;

@@ -1,4 +1,4 @@
-var $ = require('jquery');
+// var $ = require('jquery');
 /**
  * Represents the view.
  */
@@ -15,6 +15,7 @@ var View = function () {
     // Placeholders for the interface functions with the other components.
     this.onSubmit = null;
     this.onNext = null;
+    this.onRetake = null;
 
     // Event handler function.
     // I had to include an intermediate function to evaluate the state of
@@ -28,16 +29,18 @@ var View = function () {
  * Method that checks the value of the button element and passes to the controller.
  * @return {[type]} [description]
  */
-View.prototype.checkButtonValue = function () {
+View.prototype.checkButtonValue = function (event) {
+    event.preventDefault();
     if (this.button.val() === 'Submit') {
         var choice = $("input[type='radio'][name='selection']:checked").val();
+        console.log(choice);
         var feedback = this.onSubmit(choice);
+        console.log(choice + ' ' + feedback);
         this.renderAnswer(feedback);
     } else if (this.button.val() === 'Next') {
         this.onNext();
-
     } else if (this.button.val() === 'Try Again')
-        location.reload();
+        this.onRetake();
     return;
 }
 
@@ -50,6 +53,7 @@ View.prototype.renderAnswer = function (element) {
     this.answer.text(element.feedback).show();
     this.playerImage.attr('src', element.image);
     this.setButton('next-button', 'Next', 'next');
+    console.log('This is the: ' + element);
     var ball = "";
     if (element.correct) {
         ball = 'images/correct-answer-ball.png';
@@ -111,8 +115,6 @@ View.prototype.scoreBallTemplate = function (index, ball) {
         '</li>';
 }
 
-var $ = require('jquery');
-
 /**
  * Method to render each item in the list of choices.
  * @param  {number} number The index of the choice in the question object
@@ -158,4 +160,4 @@ View.prototype.displayQuestion = function (question, number) {
     this.playerImage.attr('src', question.mysteryImg);
     return;
 }
-module.exports = View;
+// module.exports = View;

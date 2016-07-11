@@ -1,5 +1,5 @@
-var $ = require('jquery');
-var data = require('./questions');
+// var $ = require('jquery');
+// var data = require('./questions');
 /**
  * Represents a question object.
  * @constructor
@@ -43,9 +43,6 @@ function createQuestion(data) {
  */
 var Model = function () {
     this.questions = createQuestion(data);
-    this.qIndex = 0;
-    this.score = 0;
-    this.totalQuestions = this.questions.length;
 };
 
 // Method to increment the question number as the user progresses in the quiz.
@@ -62,6 +59,7 @@ Model.prototype.getCurrentQuestion = function () {
 Model.prototype.reset = function () {
     this.score = 0;
     this.qIndex = 0;
+    this.totalQuestions = this.questions.length;
 }
 
 /**
@@ -88,4 +86,4 @@ Model.prototype.checkResponse = function (choice) {
         qIndex: this.qIndex
     }
 }
-module.exports = Model;
+// module.exports = Model;

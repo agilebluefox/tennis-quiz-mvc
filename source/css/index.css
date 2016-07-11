@@ -29,8 +29,8 @@ h1.title {
   text-align: center;
   color: yellow;
   text-shadow: 3px 6px 12px #323232;
-  border-top: 10px solid white;
-  border-bottom: 10px solid white;
+  border-top: 10px solid darkorange;
+  border-bottom: 10px solid darkorange;
   padding: 1rem 0;
   background-color: darkred;
   margin-top: 0;
@@ -149,7 +149,7 @@ input[type="radio"] {
 #submit-button:hover,
 #next-button:hover,
 #retake-button:hover {
-  background-color: white;
+  background-color: darkorange;
 }
 .score {
   padding: 2rem 0;
@@ -194,4 +194,5 @@ li.score-ball {
     margin-right: auto;
   }
 }
-/*# sourceMappingURL=tennis-quiz-mvc.1.0.0.css.map */
+
+/*# sourceMappingURL=maps/index.css.map */
