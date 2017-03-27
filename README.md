@@ -4,7 +4,7 @@ Interactive quiz application which tests the users knowledge of some tennis fact
 
 ## Technical Skills
 
-CSS, Gulp, HTML, JQuery, Less, Webpack
+CSS, Git/Github, Gulp, HTML, JQuery, Less, Webpack
 
 ## Breakdown
 
