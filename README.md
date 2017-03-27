@@ -12,4 +12,4 @@ This project presented a fun and interesting challenge to design a simple applic
 
 ## Notable Accomplishments
 
-The general build system was orchestrated using Gulp JS and a custom gulpfile. Less, the CSS preprocessor, was used to aid in writing more efficient css code. Webpack provided the final bundling of the javascript files that were used in the "production" version of the application. I'm very excited about continuing using these tools, or others like them, as I start new projects in the future.
+The general build system was orchestrated using Gulp JS and a custom gulpfile. Less, the CSS preprocessor, was used to aid in writing more efficient css code. Webpack provided the final bundling of the javascript files that were used in the "production" version of the application.
