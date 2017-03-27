@@ -76,6 +76,4 @@ gulp.task('minify-js', ['add-jquery'], function () {
     .pipe(gulp.dest('./js'));
 });
 
-gulp.task('default', function () {
-    return gutil.log('Gulp is running!')
-});
+gulp.task('default', ['add-html', 'add-images', 'minify-css', 'minify-js']);
